@@ -1,0 +1,5 @@
+* CallC
+
+Experiment with creation of C libraries for subsequent experiments with CFFI.
+
+See notes.org for information about compiation..

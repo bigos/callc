@@ -1,0 +1,6 @@
+# test executable
+test 
+# compilecd object file
+foo.o
+# created library
+libfoo.so

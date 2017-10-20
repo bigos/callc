@@ -33,11 +33,16 @@ libfoo.so. GCC assumes that all libraries start with lib and end with .so
 or .a (.so is for shared object or shared libraries, and .a is for archive, or
 statically linked libraries).
 
+#+BEGIN_EXAMPLE
 $ gcc -Wall -o test main.c -lfoo
+#+END_EXAMPLE
+
+Will give the error
+
 /usr/bin/ld: cannot find -lfoo
 collect2: ld returned 1 exit status
 
-Telling GCC where to find the shared library
+**** Telling GCC where to find the shared library
 
 Uh-oh! The linker doesn't know where to find libfoo. GCC has a list of places
 it looks by default, but our directory is not in that list.2 We need to tell
@@ -66,3 +71,21 @@ $ ./test
 #+END_EXAMPLE
 
 Other option is copying the library to a standard location.
+
+* Alternative, steps with copying the library to system folder
+
+We will use for this example /usr/lib/x86_64-linux-gnu/.
+
+#+BEGIN_EXAMPLE
+# compile position independent code
+gcc -c -Wall -Werror -fpic ./foo.c
+# will build file foo.o, which in turn will be converted into shared library
+gcc -shared -o ./libfoo.so ./foo.o
+# move file
+sudo mv ./libfoo.so /usr/lib/x86_64-linux-gnu/
+# that should build a libfoo.so and move it to the desired directory
+# which can be confirmed by ls
+ls /usr/lib/x86_64-linux-gnu/libfoo.so
+# now we can build test executable that will use our shared library
+gcc -Wall -o test main.c -lfoo
+#+END_EXAMPLE

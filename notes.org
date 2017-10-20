@@ -1,0 +1,68 @@
+* Compiling libraries
+
+foo.h defines the interface to our library, a single function, foo().
+foo.c contains the implementation of that function,
+and main.c is a driver program that uses our library.
+
+For the purposes of this example, everything will happen in /home/username/foo
+
+** Step 1: Compiling with Position Independent Code
+
+We need to compile our library source code into position-independent code
+(PIC):1
+
+#+BEGIN_EXAMPLE
+$ gcc -c -Wall -Werror -fpic foo.c
+#+END_EXAMPLE
+
+** Step 2: Creating a shared library from an object file
+
+Now we need to actually turn this object file into a shared library. Weâ€™ll
+call it libfoo.so:
+
+#+BEGIN_EXAMPLE
+gcc -shared -o libfoo.so foo.o
+#+END_EXAMPLE
+
+** Step 3: Linking with a shared library
+
+As you can see, that was actually pretty easy. We have a shared library.
+Let's compile our main.c and link it with libfoo. We'll call our final
+program test. Note that the -lfoo option is not looking for foo.o, but
+libfoo.so. GCC assumes that all libraries start with lib and end with .so
+or .a (.so is for shared object or shared libraries, and .a is for archive, or
+statically linked libraries).
+
+$ gcc -Wall -o test main.c -lfoo
+/usr/bin/ld: cannot find -lfoo
+collect2: ld returned 1 exit status
+
+Telling GCC where to find the shared library
+
+Uh-oh! The linker doesn't know where to find libfoo. GCC has a list of places
+it looks by default, but our directory is not in that list.2 We need to tell
+GCC where to find libfoo.so. We will do that with the -L option. In this
+example, we will use the current directory, /home/username/foo:
+
+$ gcc -L/pat/to/directory/containing/library -Wall -o test main.c -lfoo
+
+** Step 4: Making the library available at runtime
+
+Simply running test will give an error, because the executable does not know
+where to look for the library. So far we did not put it in one of the standard
+folders.
+
+#+BEGIN_EXAMPLE
+./test: error while loading shared libraries: libfoo.so: cannot open shared
+object file: No such file or directory
+#+END_EXAMPLE
+
+Oh no! The loader can't find the shared library.3 We didn't install it in a
+standard location, so we need to give the loader a little help.
+
+#+BEGIN_EXAMPLE
+$ export LD_LIBRARY_PATH=/path/to/directory/containing/library:$LD_LIBRARY_PATH
+$ ./test
+#+END_EXAMPLE
+
+Other option is copying the library to a standard location.

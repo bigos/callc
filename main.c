@@ -4,6 +4,6 @@
 int main(void)
 {
     puts("This is a shared library test...");
-    foo();
+    foo(3, 4);
     return 0;
 }

@@ -89,3 +89,6 @@ ls /usr/lib/x86_64-linux-gnu/libfoo.so
 # now we can build test executable that will use our shared library
 gcc -Wall -o test main.c -lfoo
 #+END_EXAMPLE
+
+* Building DLLs on Windows
+http://www.mingw.org/wiki/sampledll
